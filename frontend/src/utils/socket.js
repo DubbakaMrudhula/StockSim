@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'https://stocksim-n4f1.onrender.com';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://stocksim-n4f1.onrender.com';
 
 export const socket = io(SOCKET_URL, {
   autoConnect: false, // Wait until user is authenticated/components mount

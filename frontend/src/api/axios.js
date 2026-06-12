@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Backend URL
-const BASE_URL = 'https://stocksim-n4f1.onrender.com/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://stocksim-n4f1.onrender.com/api';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
