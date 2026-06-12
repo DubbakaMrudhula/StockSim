@@ -130,26 +130,60 @@ Important:
 - Be specific with numbers in your reasons (e.g., "RSI at 72 indicates overbought conditions").
 - The confidence should reflect how strong the signals are.`;
 
-    // 4. Call Gemini API
-    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-
-    // 5. Parse JSON from response (handle potential markdown wrapping)
+    // 4. Try Gemini API, with a local fallback if it fails
     let analysis;
     try {
-      // Strip markdown code fences if present
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      
       const cleaned = responseText
         .replace(/```json\s*/gi, '')
         .replace(/```\s*/g, '')
         .trim();
       analysis = JSON.parse(cleaned);
-    } catch (parseError) {
-      console.error('Failed to parse Gemini response:', responseText);
-      return res.status(500).json({
-        success: false,
-        message: 'AI returned an invalid response. Please try again.',
-      });
+    } catch (apiError) {
+      console.error('Gemini API failed, using fallback analysis. Error:', apiError.message);
+      
+      // Fallback Rule-Based Analysis
+      let score = 0;
+      const reasons = [];
+
+      if (rsi !== null) {
+        if (rsi < 30) { score += 2; reasons.push(`RSI is ${rsi}, indicating the stock is in oversold territory and may bounce back.`); }
+        else if (rsi > 70) { score -= 2; reasons.push(`RSI is ${rsi}, indicating the stock is overbought and may experience a pullback.`); }
+        else { reasons.push(`RSI is ${rsi}, which is in a neutral range.`); }
+      }
+
+      if (sma7 !== null && sma20 !== null) {
+        if (sma7 > sma20) { score += 1; reasons.push(`Short-term moving average (₹${sma7}) is above long-term (₹${sma20}), showing upward momentum.`); }
+        else { score -= 1; reasons.push(`Short-term moving average (₹${sma7}) is below long-term (₹${sma20}), showing downward trend.`); }
+      }
+
+      if (momentum5d !== null) {
+        if (momentum5d > 0) { score += 1; reasons.push(`Positive 5-day momentum of ${momentum5d}% shows recent bullish activity.`); }
+        else { score -= 1; reasons.push(`Negative 5-day momentum of ${momentum5d}% shows recent bearish activity.`); }
+      }
+
+      reasons.push(`Current price is ₹${quote.price} with a change of ${quote.changePercent}%.`);
+
+      let recommendation = 'HOLD';
+      if (score >= 2) recommendation = 'BUY';
+      else if (score <= -2) recommendation = 'SELL';
+
+      let risk = 'MEDIUM';
+      if (volatility !== null) {
+        if (volatility > 4) risk = 'HIGH';
+        else if (volatility < 1.5) risk = 'LOW';
+      }
+
+      analysis = {
+        recommendation,
+        confidence: Math.max(50, Math.min(90, 50 + Math.abs(score) * 10)),
+        risk,
+        reasons: reasons.slice(0, 4),
+        summary: `(Fallback Analysis) The AI service is currently experiencing high demand. Based on local technical indicators, the overall sentiment is ${recommendation}.`
+      };
     }
 
     // 6. Validate and normalize
