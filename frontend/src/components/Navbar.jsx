@@ -43,6 +43,11 @@ export default function Navbar() {
                 <NavLink to="/leaderboard" className={navLinkClass}>
                   Leaderboard
                 </NavLink>
+                {user.role === 'admin' && (
+                  <NavLink to="/admin" className={navLinkClass}>
+                    Admin
+                  </NavLink>
+                )}
               </div>
             )}
           </div>

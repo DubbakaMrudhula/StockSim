@@ -10,6 +10,7 @@ import StockDetails from './pages/StockDetails';
 import Portfolio from './pages/Portfolio';
 import Leaderboard from './pages/Leaderboard';
 import Watchlist from './pages/Watchlist';
+import AdminDashboard from './pages/AdminDashboard';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -20,6 +21,20 @@ const ProtectedRoute = ({ children }) => {
     </div>
   );
   if (!user) return <Navigate to="/login" />;
+  
+  return children;
+};
+
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useContext(AuthContext);
+  
+  if (loading) return (
+    <div className="flex h-screen items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+    </div>
+  );
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== 'admin') return <Navigate to="/" />;
   
   return children;
 };
@@ -76,6 +91,14 @@ export default function App() {
                   <ProtectedRoute>
                     <Leaderboard />
                   </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
                 } 
               />
               <Route path="*" element={<Navigate to="/" />} />

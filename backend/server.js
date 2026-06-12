@@ -20,6 +20,8 @@ const stockRoutes = require('./routes/stockRoutes');
 const tradeRoutes = require('./routes/tradeRoutes');
 const walletRoutes = require('./routes/walletRoutes');
 const watchlistRoutes = require('./routes/watchlistRoutes');
+const aiRoutes = require('./routes/aiRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Import error handlers
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
@@ -74,6 +76,8 @@ app.use('/api/stocks', stockRoutes);
 app.use('/api/trade', tradeRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/watchlist', watchlistRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling
 app.use(notFound);

@@ -16,6 +16,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { TrendingUp, TrendingDown, Clock, ArrowLeft } from 'lucide-react';
+import AiAnalysis from '../components/AiAnalysis';
 
 ChartJS.register(
   CategoryScale,
@@ -206,6 +207,9 @@ export default function StockDetails() {
               </div>
             </div>
           </div>
+
+          {/* AI Analysis Section */}
+          <AiAnalysis symbol={symbol} stock={stock} history={history} />
         </div>
 
         {/* Right Col: Trade Panel */}
