@@ -1,0 +1,243 @@
+### Stock Market Simulator API - HTTP Requests
+### This file contains all API endpoints for testing with REST Client or similar tools
+### Set @token = your_jwt_token_here after logging in
+
+@token = 
+
+### 
+### AUTHENTICATION ENDPOINTS
+### 
+
+### Register a new user account
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "trader_john",
+  "email": "john@example.com",
+  "password": "SecurePass123"
+}
+
+### Login to get JWT token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "SecurePass123"
+}
+
+### Get current user profile
+GET http://localhost:5000/api/auth/profile
+Authorization: Bearer {{token}}
+
+### Update user profile
+PUT http://localhost:5000/api/auth/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "trader_john_updated",
+  "profilePicture": "https://example.com/avatar.jpg"
+}
+
+### Get all users (admin only)
+GET http://localhost:5000/api/auth/users
+Authorization: Bearer {{token}}
+
+### 
+### STOCK ENDPOINTS
+### 
+
+### Get trending/top stocks
+GET http://localhost:5000/api/stocks
+Authorization: Bearer {{token}}
+
+### Get detailed information about a specific stock
+GET http://localhost:5000/api/stocks/INFY
+Authorization: Bearer {{token}}
+
+### Get price history for a stock (last 30 days)
+GET http://localhost:5000/api/stocks/history/INFY
+Authorization: Bearer {{token}}
+
+### Search for stocks by name or symbol
+GET http://localhost:5000/api/stocks/search?q=infosys
+Authorization: Bearer {{token}}
+
+### Get batch quotes for multiple stocks
+POST http://localhost:5000/api/stocks/batch
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "symbols": ["INFY", "TCS", "WIPRO", "RELIANCE"]
+}
+
+### 
+### TRADING ENDPOINTS
+### 
+
+### Buy stock - Place a buy order
+POST http://localhost:5000/api/trade/buy
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "symbol": "INFY",
+  "quantity": 10,
+  "price": 1650.50
+}
+
+### Sell stock - Place a sell order
+POST http://localhost:5000/api/trade/sell
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "symbol": "INFY",
+  "quantity": 5,
+  "price": 1700.75
+}
+
+### Get all trades/transaction history
+GET http://localhost:5000/api/trade/history
+Authorization: Bearer {{token}}
+
+### 
+### PORTFOLIO ENDPOINTS
+### 
+
+### Get user's complete portfolio (all holdings)
+GET http://localhost:5000/api/portfolio
+Authorization: Bearer {{token}}
+
+### Get profit & loss summary for portfolio
+GET http://localhost:5000/api/portfolio/profit-loss
+Authorization: Bearer {{token}}
+
+### Get portfolio summary with statistics
+GET http://localhost:5000/api/portfolio/summary
+Authorization: Bearer {{token}}
+
+### 
+### WALLET ENDPOINTS
+### 
+
+### Check current wallet balance
+GET http://localhost:5000/api/wallet/balance
+Authorization: Bearer {{token}}
+
+### Add funds to wallet (deposit)
+POST http://localhost:5000/api/wallet/add-funds
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 5000
+}
+
+### Withdraw funds from wallet
+POST http://localhost:5000/api/wallet/withdraw
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 2000
+}
+
+### Get wallet transaction history
+GET http://localhost:5000/api/wallet/history
+Authorization: Bearer {{token}}
+
+### 
+### WATCHLIST ENDPOINTS
+### 
+
+### Get user's watchlist
+GET http://localhost:5000/api/watchlist
+Authorization: Bearer {{token}}
+
+### Add stock to watchlist
+POST http://localhost:5000/api/watchlist/add
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "symbol": "TCS"
+}
+
+### Remove stock from watchlist
+DELETE http://localhost:5000/api/watchlist/remove
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "symbol": "TCS"
+}
+
+### 
+### ALERT ENDPOINTS
+### 
+
+### Create price alert for a stock
+POST http://localhost:5000/api/alerts/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "symbol": "INFY",
+  "alertType": "price_above",
+  "targetPrice": 1750,
+  "condition": "greater_than"
+}
+
+### Get all alerts for user
+GET http://localhost:5000/api/alerts
+Authorization: Bearer {{token}}
+
+### Delete an alert
+DELETE http://localhost:5000/api/alerts/delete/64a9c8f2b1d2e3f4a5b6c7d8
+Authorization: Bearer {{token}}
+
+### 
+### LEADERBOARD ENDPOINTS
+### 
+
+### Get global leaderboard (top traders by portfolio value)
+GET http://localhost:5000/api/leaderboard
+Authorization: Bearer {{token}}
+
+### Get monthly leaderboard (top gainers this month)
+GET http://localhost:5000/api/leaderboard?period=monthly
+Authorization: Bearer {{token}}
+
+### Get user's leaderboard rank
+GET http://localhost:5000/api/leaderboard/rank
+Authorization: Bearer {{token}}
+
+### 
+### HEALTH CHECK
+### 
+
+### Check API health status
+GET http://localhost:5000/api/health
+
+### Get API info and available endpoints
+GET http://localhost:5000
+
+### 
+### SETUP INSTRUCTIONS
+### 
+### 
+### 1. Install REST Client extension in VS Code
+### 2. Start your backend server: npm run dev
+### 3. Register a new user or login with existing credentials
+### 4. Copy the JWT token from the response
+### 5. Replace @token value at the top of this file with your JWT token
+### 6. Run requests by clicking "Send Request" link that appears above each request
+###
+### Environment: Development (local)
+### Port: 5000 (adjust if different in your setup)
+### Database: MongoDB (ensure it's running)
+###
