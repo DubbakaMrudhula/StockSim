@@ -14,10 +14,10 @@ export default function Leaderboard() {
     const fetchLeaderboard = async () => {
       try {
         const res = await axiosInstance.get('/leaderboard');
-        // filter out dummy/test accounts and ensure sorting by totalAssets desc
+        // include all real usernames (allow exact "test"), then sort by totalAssets desc
         const raw = res.data.data || [];
         const filtered = raw
-          .filter((l) => l.username && !l.username.toLowerCase().startsWith('test'))
+          .filter((l) => l.username && !l.username.toLowerCase().startsWith('test-'))
           .sort((a, b) => (b.totalAssets || 0) - (a.totalAssets || 0));
         setLeaders(filtered);
         if (res.data.myRank) {
